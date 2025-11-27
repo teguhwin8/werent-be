@@ -13,12 +13,13 @@ datasource db {
   provider = "postgresql"
 }
 
-model Reviews {
-  id          Int     @id               @default(autoincrement()) 
-  avatar_url  String  @db.VarChar(255)
-  ratings     Int 
-  measurament String  @db.VarChar(255)
-  like_counts Int 
-  comment     String 
-  created_at  DateTime @default(now())
+model Review {
+  id           Int      @id @default(autoincrement())
+  avatarUrl    String   @db.VarChar(255)
+  rating       Int
+  measurement  String   @db.VarChar(255)
+  likeCount    Int      @default(0)
+  comment      String   @db.Text
+  createdAt    DateTime @default(now())
 }
+
