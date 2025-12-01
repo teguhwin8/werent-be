@@ -111,7 +111,14 @@ export class ProductsService {
   async getReviews(productId: number, queryDto: QueryReviewsDto) {
     const page = queryDto.page ?? 1;
     const limit = queryDto.limit ?? 10;
-    const { sort, rating, withMedia } = queryDto;
+
+    // Support both old and new parameter names
+    const sortBy =
+      queryDto.sortBy ||
+      (queryDto.sort === 'helpful' ? 'helpful' : 'createdAt');
+    const hasMedia = queryDto.hasMedia ?? queryDto.withMedia;
+    const { rating, fit } = queryDto;
+
     const skip = (page - 1) * limit;
 
     // Build where clause
@@ -121,7 +128,11 @@ export class ProductsService {
       where.rating = { in: rating };
     }
 
-    if (withMedia) {
+    if (fit && fit.length > 0) {
+      where.fit = { in: fit };
+    }
+
+    if (hasMedia) {
       where.media = {
         some: {},
       };
@@ -129,7 +140,7 @@ export class ProductsService {
 
     // Build orderBy clause
     let orderBy: any = {};
-    if (sort === 'helpful') {
+    if (sortBy === 'helpful') {
       orderBy = [{ helpful: { _count: 'desc' } }, { createdAt: 'desc' }];
     } else {
       orderBy = { createdAt: 'desc' };
