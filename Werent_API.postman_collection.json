@@ -205,6 +205,12 @@
                   "type": "text"
                 },
                 {
+                  "key": "sizes",
+                  "value": "[\"S\",\"M\",\"L\",\"XL\"]",
+                  "type": "text",
+                  "description": "Array of available sizes (optional)"
+                },
+                {
                   "key": "image",
                   "type": "file",
                   "src": []

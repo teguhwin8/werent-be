@@ -1,6 +1,12 @@
-import { IsNotEmpty, IsString, IsOptional, IsNumber } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsString,
+  IsOptional,
+  IsNumber,
+  IsArray,
+} from 'class-validator';
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { Type } from 'class-transformer';
+import { Type, Transform } from 'class-transformer';
 
 export class CreateProductDto {
   @ApiProperty({
@@ -27,4 +33,24 @@ export class CreateProductDto {
   @IsNumber()
   @IsOptional()
   price?: number;
+
+  @ApiPropertyOptional({
+    description: 'Available sizes',
+    example: ['S', 'M', 'L', 'XL'],
+    type: [String],
+  })
+  @IsArray()
+  @IsString({ each: true })
+  @IsOptional()
+  @Transform(({ value }) => {
+    if (typeof value === 'string') {
+      try {
+        return JSON.parse(value);
+      } catch {
+        return value.split(',').map((s) => s.trim());
+      }
+    }
+    return value;
+  })
+  sizes?: string[];
 }

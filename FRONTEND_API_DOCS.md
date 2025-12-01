@@ -133,6 +133,7 @@ GET /products?page=1&limit=10&search=shirt
     description: string | null;
     imageUrl: string | null;
     price: number | null;
+    sizes: string[]; // e.g., ["S", "M", "L"]
     overallRating: number;
     totalReviews: number;
     createdAt: string;
@@ -162,6 +163,7 @@ Content-Type: multipart/form-data
   name: string; // required
   description?: string; // optional
   price?: number; // optional
+  sizes?: string[]; // optional - array of sizes e.g., ["S", "M", "L"] or ["40", "41"]
   image?: File; // optional - product image (jpg, png, webp, max 5MB)
 }
 ```
@@ -173,6 +175,7 @@ const formData = new FormData();
 formData.append('name', 'Premium Leather Bag');
 formData.append('description', 'High-quality leather bag');
 formData.append('price', '599000');
+formData.append('sizes', JSON.stringify(['S', 'M', 'L']));
 formData.append('image', imageFile); // File object from input[type="file"]
 
 const response = await fetch('http://localhost:3000/api/products', {
@@ -193,6 +196,7 @@ const response = await fetch('http://localhost:3000/api/products', {
   description: string | null;
   imageUrl: string | null; // Cloudinary URL if image uploaded
   price: number | null;
+  sizes: string[];
   overallRating: number;
   totalReviews: number;
   createdAt: string;
@@ -215,6 +219,7 @@ GET /products/:id
   description: string | null;
   imageUrl: string | null;
   price: number | null;
+  sizes: string[];
   overallRating: number; // 0-5
   totalReviews: number;
   createdAt: string;
@@ -429,6 +434,8 @@ export interface Product {
   name: string;
   description: string | null;
   imageUrl: string | null;
+  price: number | null;
+  sizes: string[]; // Available sizes e.g., ["S", "M", "L"] or ["40", "41", "42"]
   overallRating: number;
   totalReviews: number;
   createdAt: string;

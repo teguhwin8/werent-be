@@ -83,6 +83,7 @@ async function main() {
           imageUrl:
             'https://images.unsplash.com/photo-1595777457583-95e059d581b8',
           price: 299000,
+          sizes: ['S', 'M', 'L', 'XL'],
         },
       }),
       prisma.product.create({
@@ -92,6 +93,7 @@ async function main() {
           imageUrl:
             'https://images.unsplash.com/photo-1596755094514-f87e34085b2c',
           price: 189000,
+          sizes: ['S', 'M', 'L'],
         },
       }),
       prisma.product.create({
@@ -100,6 +102,7 @@ async function main() {
           description: 'Versatile denim jacket for casual outings',
           imageUrl: 'https://images.unsplash.com/photo-1551028719-00167b16eac5',
           price: 449000,
+          sizes: ['M', 'L', 'XL', 'XXL'],
         },
       }),
     ]);

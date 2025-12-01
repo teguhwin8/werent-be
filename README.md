@@ -123,6 +123,7 @@ Content-Type: multipart/form-data
 - name: Premium Cotton Shirt
 - description: High-quality cotton
 - price: 299000
+- sizes: ["S", "M", "L", "XL"]
 - image: [file]
 ```
 
@@ -258,6 +259,7 @@ model Product {
   id            Int      @id
   name          String
   price         Float?
+  sizes         String[] // available sizes (e.g., ["S", "M", "L"])
   imageUrl      String?
   overallRating Float    // cached
   totalReviews  Int      // cached

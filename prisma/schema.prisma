@@ -15,16 +15,16 @@ datasource db {
 
 // User model for authentication
 model User {
-  id            Int             @id @default(autoincrement())
-  email         String          @unique
-  password      String
-  name          String
-  avatarUrl     String?
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
-  
-  reviews       Review[]
-  helpfulVotes  ReviewHelpful[]
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  password  String
+  name      String
+  avatarUrl String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  reviews      Review[]
+  helpfulVotes ReviewHelpful[]
 }
 
 // Product model
@@ -34,36 +34,37 @@ model Product {
   description   String?  @db.Text
   imageUrl      String?
   price         Float?
+  sizes         String[] @default([])
   overallRating Float    @default(0)
   totalReviews  Int      @default(0)
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
-  
-  reviews       Review[]
-  
+
+  reviews Review[]
+
   @@index([overallRating])
 }
 
 // Review model
 model Review {
-  id          Int             @id @default(autoincrement())
-  productId   Int
-  userId      Int
-  rating      Int             // 1-5
-  content     String          @db.Text
-  waist       Int?            // cm - Optional for clothing items
-  bust        Int?            // cm - Optional for clothing items
-  hips        Int?            // cm - Optional for clothing items
-  fit         FitType?        // Optional for clothing items
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
-  editedAt    DateTime?
-  
-  product     Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  media       ReviewMedia[]
-  helpful     ReviewHelpful[]
-  
+  id        Int       @id @default(autoincrement())
+  productId Int
+  userId    Int
+  rating    Int // 1-5
+  content   String    @db.Text
+  waist     Int? // cm - Optional for clothing items
+  bust      Int? // cm - Optional for clothing items
+  hips      Int? // cm - Optional for clothing items
+  fit       FitType? // Optional for clothing items
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  editedAt  DateTime?
+
+  product Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  media   ReviewMedia[]
+  helpful ReviewHelpful[]
+
   @@index([productId, rating])
   @@index([createdAt])
 }
@@ -74,10 +75,10 @@ model ReviewHelpful {
   reviewId  Int
   userId    Int
   createdAt DateTime @default(now())
-  
-  review    Review   @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
   @@unique([reviewId, userId])
   @@index([reviewId])
 }
@@ -88,23 +89,22 @@ model ReviewMedia {
   reviewId  Int
   type      MediaType
   url       String
-  publicId  String?   // Cloudinary public_id for deletion
+  publicId  String? // Cloudinary public_id for deletion
   createdAt DateTime  @default(now())
-  
-  review    Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
-  
+
+  review Review @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+
   @@index([reviewId])
 }
 
 // Enums
 enum FitType {
-  SMALL  // Kebesaran
-  TRUE   // Pas/sesuai
-  LARGE  // Kekecilan
+  SMALL // Kebesaran
+  TRUE // Pas/sesuai
+  LARGE // Kekecilan
 }
 
 enum MediaType {
   PHOTO
   VIDEO
 }
-
