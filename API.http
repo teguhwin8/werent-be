@@ -1,0 +1,235 @@
+### WeRent Backend API Testing
+### Base URL
+@baseUrl = http://localhost:3000/api
+@token = your_token_here
+
+#############################################
+# AUTH ENDPOINTS
+#############################################
+
+### Register new user
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "test@example.com",
+  "password": "password123",
+  "name": "Test User",
+  "avatarUrl": "https://randomuser.me/api/portraits/men/32.jpg"
+}
+
+### Login
+# @name login
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+### Get current user profile (protected)
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{token}}
+
+#############################################
+# PRODUCTS ENDPOINTS
+#############################################
+
+### Get all products
+GET {{baseUrl}}/products
+
+### Get all products with pagination
+GET {{baseUrl}}/products?page=1&limit=5
+
+### Search products by name
+GET {{baseUrl}}/products?search=shirt
+
+### Get all products with search and pagination
+GET {{baseUrl}}/products?page=1&limit=10&search=bag
+
+### Create product (text only) - Protected
+POST {{baseUrl}}/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Classic Blue Jeans",
+  "description": "Comfortable denim jeans for everyday wear",
+  "price": 450000
+}
+
+### Create product with image upload (use multipart/form-data)
+# Note: Use Postman, Thunder Client, or Swagger UI for file uploads
+# POST {{baseUrl}}/products
+# Authorization: Bearer {{token}}
+# Content-Type: multipart/form-data
+# Body: 
+#   - name: Premium Leather Bag
+#   - description: High-quality leather bag
+#   - price: 599000
+#   - image: [product-image.jpg]
+
+### Get product by ID
+GET {{baseUrl}}/products/1
+
+### Get review summary for product
+GET {{baseUrl}}/products/1/reviews/summary
+
+### Get reviews (basic)
+GET {{baseUrl}}/products/1/reviews
+
+### Get reviews with pagination
+GET {{baseUrl}}/products/1/reviews?page=1&limit=5
+
+### Get reviews sorted by helpful
+GET {{baseUrl}}/products/1/reviews?sort=helpful
+
+### Get reviews filtered by rating
+GET {{baseUrl}}/products/1/reviews?rating=5
+
+### Get reviews with multiple ratings
+GET {{baseUrl}}/products/1/reviews?rating=4,5
+
+### Get reviews with media only
+GET {{baseUrl}}/products/1/reviews?withMedia=true
+
+### Get reviews combined filters
+GET {{baseUrl}}/products/1/reviews?page=1&limit=10&sort=helpful&rating=4,5&withMedia=true
+
+#############################################
+# REVIEWS ENDPOINTS (Protected)
+#############################################
+
+### Create review (text only - NO measurements)
+POST {{baseUrl}}/reviews/products/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "content": "This is an amazing product! The quality is superb and I love it."
+}
+
+### Create review (with optional measurements for clothing)
+POST {{baseUrl}}/reviews/products/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "content": "This is an amazing product! The quality is superb and fits perfectly.",
+  "waist": 75,
+  "bust": 88,
+  "hips": 95,
+  "fit": "TRUE"
+}
+
+### Create review with media upload (use multipart/form-data)
+# Note: Use Postman, Thunder Client, or Swagger UI (http://localhost:3000/api/docs)
+# POST {{baseUrl}}/reviews/products/1
+# Authorization: Bearer {{token}}
+# Content-Type: multipart/form-data
+# Body: 
+#   - rating: 5
+#   - content: Great product with photos!
+#   - waist: 75 (optional)
+#   - bust: 88 (optional)
+#   - hips: 95 (optional)
+#   - fit: TRUE (optional)
+#   - media: [file1.jpg, file2.jpg]
+
+### Toggle helpful (like/unlike)
+POST {{baseUrl}}/reviews/1/helpful
+Authorization: Bearer {{token}}
+
+### Remove helpful
+DELETE {{baseUrl}}/reviews/1/helpful
+Authorization: Bearer {{token}}
+
+#############################################
+# TEST SCENARIOS
+#############################################
+
+### Scenario 1: Create Product and Add Review
+# Step 1: Login first
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "password123"
+}
+
+# Step 2: Copy access_token and update @token variable
+
+# Step 3: Create a product
+POST {{baseUrl}}/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "name": "Vintage Leather Jacket",
+  "description": "Premium quality vintage leather jacket",
+  "price": 1299000
+}
+
+# Step 4: Create a review for the product (without measurements)
+POST {{baseUrl}}/reviews/products/4
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 5,
+  "content": "Excellent leather jacket! Worth every penny."
+}
+
+### Scenario 2: User Journey - Register, Login, Create Review
+# Step 1: Register
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+  "email": "newuser@example.com",
+  "password": "password123",
+  "name": "New User"
+}
+
+# Step 2: Copy the access_token from response and update @token variable
+
+# Step 3: Create a review with measurements (for clothing)
+POST {{baseUrl}}/reviews/products/1
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+  "rating": 4,
+  "content": "Good product, fits well and comfortable to wear daily.",
+  "waist": 70,
+  "bust": 85,
+  "hips": 92,
+  "fit": "TRUE"
+}
+
+# Step 4: Mark review as helpful
+POST {{baseUrl}}/reviews/1/helpful
+Authorization: Bearer {{token}}
+
+### Scenario 3: Browse Products and Reviews
+# Browse all products
+GET {{baseUrl}}/products?page=1&limit=10
+
+# Search for specific products
+GET {{baseUrl}}/products?search=jacket
+# High-rated reviews only
+GET {{baseUrl}}/products/1/reviews?rating=5
+
+# Most helpful reviews
+GET {{baseUrl}}/products/1/reviews?sort=helpful&limit=3
+
+# Reviews with photos/videos
+GET {{baseUrl}}/products/1/reviews?withMedia=true
+
+### Scenario 3: Check Product Statistics
+# Get overall rating and fit distribution
+GET {{baseUrl}}/products/1/reviews/summary
